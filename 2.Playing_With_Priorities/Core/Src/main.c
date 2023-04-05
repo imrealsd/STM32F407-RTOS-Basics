@@ -25,7 +25,7 @@
 #include "gpio.h"
 
 
-
+/* Thread Handlers */
 osThreadId Task1Handle;
 osThreadId Task2Handle;
 osThreadId Task3Handle;
@@ -57,7 +57,7 @@ int main(void)
 	osThreadDef(Task2, Task2_init, osPriorityNormal, 0, 128);
 	Task2Handle = osThreadCreate(osThread(Task2), NULL);
 
-	osThreadDef(Task3, Task3_init, osPriorityBelowNormal, 0, 128);
+	osThreadDef(Task3, Task3_init, osPriorityBelowNormalNormal, 0, 128);
 	Task3Handle = osThreadCreate(osThread(Task3), NULL);
 
 
@@ -65,31 +65,39 @@ int main(void)
 	osKernelStart();
 }
 
-
+/**
+ * Task with highest priority
+ */
 void Task1_init(void const *arguments)
 {
 	for (;;) {
 		char *msg = "Hello From Task1\r\n";
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
-		osDelay(500);
+		osDelay(1000);
 	}
 }
 
+/**
+ * Task with medium priority
+ */
 void Task2_init(void const *arguments)
 {
 	for (;;) {
 		char *msg = "Hello From Task2\r\n";
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
-		osDelay(500);
+		osDelay(1000);
 	}
 }
 
+/**
+ * Task with low priority
+ */
 void Task3_init(void const *arguments)
 {
 	for (;;) {
 		char *msg = "Hello From Task3\r\n\n";
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
-		osDelay(500);
+		osDelay(1000);
 	}
 }
 
