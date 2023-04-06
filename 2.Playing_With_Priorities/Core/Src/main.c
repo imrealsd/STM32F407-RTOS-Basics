@@ -57,7 +57,7 @@ int main(void)
 	osThreadDef(Task2, Task2_init, osPriorityNormal, 0, 128);
 	Task2Handle = osThreadCreate(osThread(Task2), NULL);
 
-	osThreadDef(Task3, Task3_init, osPriorityBelowNormalNormal, 0, 128);
+	osThreadDef(Task3, Task3_init, osPriorityBelowNormal, 0, 128);
 	Task3Handle = osThreadCreate(osThread(Task3), NULL);
 
 
