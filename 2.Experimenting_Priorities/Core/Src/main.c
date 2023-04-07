@@ -29,6 +29,7 @@
 osThreadId Task1Handle;
 osThreadId Task2Handle;
 osThreadId Task3Handle;
+osThreadId Task4Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -36,6 +37,7 @@ void MX_FREERTOS_Init(void);
 void Task1_init(void const *arguments);
 void Task2_init(void const *arguments);
 void Task3_init(void const *arguments);
+void Task4_init(void const *arguments);
 
 
 
@@ -51,14 +53,17 @@ int main(void)
 	MX_USART1_UART_Init();
 	MX_FREERTOS_Init();
 
-	osThreadDef(Task1, Task1_init, osPriorityAboveNormal, 0, 128);
+	osThreadDef(Task1, Task1_init, osPriorityNormal, 0, 128);
 	Task1Handle = osThreadCreate(osThread(Task1), NULL);
 
-	osThreadDef(Task2, Task2_init, osPriorityNormal, 0, 128);
+	osThreadDef(Task2, Task2_init, osPriorityAboveNormal, 0, 128);
 	Task2Handle = osThreadCreate(osThread(Task2), NULL);
 
 	osThreadDef(Task3, Task3_init, osPriorityBelowNormal, 0, 128);
 	Task3Handle = osThreadCreate(osThread(Task3), NULL);
+
+	osThreadDef(Task4, Task4_init, osPriorityHigh, 0, 128);
+	Task4Handle = osThreadCreate(osThread(Task4), NULL);
 
 
 	/* Start scheduler */
@@ -95,8 +100,34 @@ void Task2_init(void const *arguments)
 void Task3_init(void const *arguments)
 {
 	for (;;) {
-		char *msg = "Hello From Task3\r\n\n";
+		char *msg = "Hello From Task3\r\n";
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osDelay(1000);
+	}
+}
+
+void Task4_init(void const *arguments)
+{
+	char *msg1 = "Changing Priorities\r\n";
+	char *msg2 = "ERROR !!\r\n";
+	int count = 0;
+
+	for (;;) {
+		count ++;
+		if (count == 5) {
+			HAL_UART_Transmit(&huart1, (uint8_t *)msg1, strlen(msg1), 100);
+			count = 0;
+
+			if (osThreadSetPriority(Task1Handle, osPriorityRealtime) != osOK) {
+				HAL_UART_Transmit(&huart1, (uint8_t *)msg2, strlen(msg2), 100);
+			}
+
+			if (osThreadGetPriority(Task1Handle) != osPriorityRealtime) {
+				HAL_UART_Transmit(&huart1, (uint8_t *)msg2, strlen(msg2), 100);
+			}
+
+			osThreadTerminate(Task4Handle);
+		}
 		osDelay(1000);
 	}
 }
