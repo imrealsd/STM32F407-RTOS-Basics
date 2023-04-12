@@ -22,6 +22,9 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "string.h"
+#include "usart.h"
+#include "stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -132,7 +135,7 @@ void MX_FREERTOS_Init(void)
 
 }
 
-/* USER CODE BEGIN Header_hpSendTask_init */
+
 /**
  * @brief  Function implementing the HpSendTask thread.
  * @param  argument: Not used
@@ -141,15 +144,22 @@ void MX_FREERTOS_Init(void)
 /* USER CODE END Header_hpSendTask_init */
 void hpSendTask_init(void const *argument)
 {
-	/* USER CODE BEGIN hpSendTask_init */
-	/* Infinite loop */
+	char msg[100];
+	int value = 100;
+
 	for (;;) {
-		osDelay(1);
+		strcpy(msg, "Entering HP Send Task\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		strcpy(msg, "Sending Data to Queue\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osMessagePut(myQueueHandle, value, osWaitForever);
+		strcpy(msg, "Leaving HP Send Task\r\n\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osDelay(2000);
 	}
-	/* USER CODE END hpSendTask_init */
 }
 
-/* USER CODE BEGIN Header_lpSendTask_init */
+
 /**
  * @brief Function implementing the LpSendTask thread.
  * @param argument: Not used
@@ -158,15 +168,22 @@ void hpSendTask_init(void const *argument)
 /* USER CODE END Header_lpSendTask_init */
 void lpSendTask_init(void const *argument)
 {
-	/* USER CODE BEGIN lpSendTask_init */
-	/* Infinite loop */
+	char msg[100];
+	int value = 20;
+
 	for (;;) {
-		osDelay(1);
+		strcpy(msg, "Entering LP Send Task\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		strcpy(msg, "Sending Data to Queue\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osMessagePut(myQueueHandle, value, osWaitForever);
+		strcpy(msg, "Leaving LP Send Task\r\n\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osDelay(3000);
 	}
-	/* USER CODE END lpSendTask_init */
 }
 
-/* USER CODE BEGIN Header_receiveTask_init */
+
 /**
  * @brief Function implementing the ReceiveTask thread.
  * @param argument: Not used
@@ -175,15 +192,20 @@ void lpSendTask_init(void const *argument)
 /* USER CODE END Header_receiveTask_init */
 void receiveTask_init(void const *argument)
 {
-	/* USER CODE BEGIN receiveTask_init */
-	/* Infinite loop */
+	osEvent msgQueue;
+	char msg[100];
+
 	for (;;) {
-		osDelay(1);
+		strcpy(msg, "Entering Receiving Task\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		strcpy(msg, "Getting Data from Queue\r\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		msgQueue = osMessageGet(myQueueHandle, osWaitForever);
+		sprintf(msg, "Received Data: %ld\r\n", msgQueue.value.v);
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		strcpy(msg, "Leaving Receiving Task\r\n\n");
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), 100);
+		osDelay(1000);
 	}
-	/* USER CODE END receiveTask_init */
 }
 
-/* Private application code --------------------------------------------------*/
-/* USER CODE BEGIN Application */
-
-/* USER CODE END Application */
