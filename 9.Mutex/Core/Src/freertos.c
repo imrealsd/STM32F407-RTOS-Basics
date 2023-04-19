@@ -138,7 +138,7 @@ void highTask_init(void const *argument)
 	char *msg1 = "Entered HPT : Waiting For Mutex\r\n";
 	char *msg2 = "Mutex Acquired\r\n";
 	char *msg3 = "Leaving HPT\r\n";
-	char  msg4[] = ":::::::: OWNER : HIGH TASK :::::::::\r\n";
+	char *msg4 = ":::::::: OWNER : HIGH TASK :::::::::\r\n";
 
 	for (;;) {
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg1, strlen(msg1), HAL_MAX_DELAY);
@@ -163,7 +163,7 @@ void lowTask_init(void const *argument)
 	char *msg1 = "Entered LPT : Waiting For Mutex\r\n";
 	char *msg2 = "Mutex Acquired\r\n";
 	char *msg3 = "Leaving LPT\r\n";
-	char  msg4[] = ":::::::: OWNER : LOW TASK :::::::::\r\n";
+	char *msg4 = ":::::::: OWNER : LOW TASK :::::::::\r\n";
 
 	for (;;) {
 		HAL_UART_Transmit(&huart1, (uint8_t *)msg1, strlen(msg1), HAL_MAX_DELAY);
